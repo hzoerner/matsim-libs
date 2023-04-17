@@ -184,7 +184,7 @@ public class LinkStats implements MATSimAppCommand {
 					double freeSpeedTravelTime = Math.floor(link.getLength() / link.getFreespeed()) + 1;
 					double actualTravelTime = tt.getLinkTravelTime(link, t, null, null);
 
-					double actualSpeed = link.getLength() / actualTravelTime;
+					double actualSpeed = Math.round(link.getLength() / actualTravelTime);
 					velocitiesOnLink.put(t, actualSpeed);
 
 					double speedRatio = freeSpeedTravelTime / actualTravelTime;
@@ -236,15 +236,16 @@ public class LinkStats implements MATSimAppCommand {
 			return 0;
 
 		try (CSVPrinter printer = csv.createPrinter(outputVelocities)) {
-			printer.printRecord(Set.of("linkId", "time", "avg_speed"));
+			printer.printRecord(List.of("linkId", "time", "avg_speed"));
 
 			for (Map.Entry<Id<Link>, Int2DoubleMap> linkEntry : avgSpeedPerTimeSliceAndLink.entrySet()) {
-				printer.print(linkEntry.getKey().toString());
+				String linkId = linkEntry.getKey().toString();
 				for (Int2DoubleMap.Entry timeEntry : linkEntry.getValue().int2DoubleEntrySet()) {
+					printer.print(linkId);
 					printer.print(timeEntry.getIntKey());
 					printer.print(timeEntry.getDoubleValue());
+					printer.println();
 				}
-				printer.println();
 			}
 		}
 
