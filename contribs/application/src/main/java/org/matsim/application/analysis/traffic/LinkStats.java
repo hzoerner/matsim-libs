@@ -27,6 +27,7 @@ import org.matsim.core.trafficmonitoring.TravelTimeCalculator;
 import picocli.CommandLine;
 
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -169,6 +170,8 @@ public class LinkStats implements MATSimAppCommand {
 			}
 			writer.printRecord(titleRow);
 
+			DecimalFormat df = new DecimalFormat("#.##");
+
 			for (Link link : network.getLinks().values()) {
 
 				if (!considerLink(link, index))
@@ -184,7 +187,7 @@ public class LinkStats implements MATSimAppCommand {
 					double freeSpeedTravelTime = Math.floor(link.getLength() / link.getFreespeed()) + 1;
 					double actualTravelTime = tt.getLinkTravelTime(link, t, null, null);
 
-					double actualSpeed = Math.round(link.getLength() / actualTravelTime);
+					double actualSpeed = Math.round((link.getLength() / actualTravelTime) * 10.0) / 10.0;
 					velocitiesOnLink.put(t, actualSpeed);
 
 					double speedRatio = freeSpeedTravelTime / actualTravelTime;
